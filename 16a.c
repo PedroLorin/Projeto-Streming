@@ -1,48 +1,31 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-/*1) Crie uma enumeração representando os meses do ano.
-Agora, escreva um programa que leia um valor inteiro do
-teclado e exiba o nome do mês correspondente e a
-quantidade de dias que ele possui. */
-typedef enum {JANEIRO=1,FEVEREIRO,MARCO,ABRIL,MAIO,JUNHO,JULHO,AGOSTO,SETEMBRO,OUTUBRO, NOVEMBRO,DEZEMBRO}Mes;
+#include <stdio.h>
+#include "meu_header.h" // Inclui o cabeçalho criado
 
-int main(){
+int somar(int a, int b) {
+    return a + b;
+}
 
-int numero;
+int main() {
+    int num1 = 5;
+    int num2 = 3;
+    int resultado = somar(num1, num2);
 
- printf("digite o numero que represeta o mês desejado\n");
- scanf("%d",&numero);
-  switch(numero){
-    case JANEIRO: printf(" Janeiro tem 31 dias\n");  break;
-
-    case FEVEREIRO: printf(" FEVEREIRO tem 28 dias\n");  break;
-
-    case MARCO: printf(" MARÇO tem 31 dias\n");  break;
-
-    case MAIO: printf(" MAIO tem 31 dias\n");  break;
-
-    case ABRIL: printf(" ABRIL tem 30 dias\n");  break;
-
-    case JUNHO: printf(" JUNHOtem 30 dias\n");  break;
-
-    case JULHO: printf(" JULHO tem 31 dias\n");  break;
-
-    case AGOSTO: printf(" AGOSTO tem 31 dias\n");  break;
-
-    case SETEMBRO: printf(" SETEMBRO tem 30 dias\n");  break;
-
-    case OUTUBRO: printf(" OUTUBRO tem 31 dias\n");  break;
- 
-    case NOVEMBRO: printf(" NOVEMBRO tem 30 dias\n");  break;
-
-    case DEZEMBRO: printf(" DEZEMBRO tem 31 dias\n");  break;
-    default:
-   printf("Número de mês inválido\n"); break;
- }//switch1
-
+    printf("A soma de %d e %d é: %d\n", num1, num2, resultado);
 
     return 0;
 }
+
+
+#ifndef MEU_HEADER_H
+#define MEU_HEADER_H
+
+// Declaração de uma função
+int somar(int a, int b);
+
+// Definição de uma constante
+#define PI 3.14159
+
+#endif // MEU_HEADER_H
+
 
 
