@@ -27,6 +27,16 @@ int main() {
     return 0;
 }
 
+#include "exemplo.h"
+
+
+int somar( int a , int b){
+    
+return(a+b);
+}
+
+
+
 all: exemplo.o
 	gcc exemplo.o main.c -o main
 
@@ -38,5 +48,22 @@ clean:
 
 run:
 	./main
+	
+	
+	a@linux:~$ cd /home/a/Desktop/prog2
+a@linux:~/Desktop/prog2$ make
+cc    -c -o exemplo.o exemplo.c
+gcc exemplo.o main.c -o main
+/usr/bin/ld: /tmp/ccEBlQjP.o: in function `somar':
+main.c:(.text+0x0): multiple definition of `somar'; exemplo.o:exemplo.c:(.text+0x0): first defined here
+collect2: error: ld returned 1 exit status
+make: *** [makefile:2: all] Error 1
+a@linux:~/Desktop/prog2$ 
+
+
+	
+	
+	
+	
 
 
