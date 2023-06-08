@@ -1,5 +1,17 @@
+#ifndef exemplo.h
+#define exemplo.h
+
+// Declaração de uma função
+int somar(int a, int b);
+
+// Definição de uma constante
+#define PI 3.14159
+
+#endif // exemplo
+
+
 #include <stdio.h>
-#include "meu_header.h" // Inclui o cabeçalho criado
+#include "exemplo.h" // Inclui o cabeçalho criado
 
 int somar(int a, int b) {
     return a + b;
@@ -15,17 +27,16 @@ int main() {
     return 0;
 }
 
+all: exemplo.o
+	gcc exemplo.o main.c -o main
 
-#ifndef MEU_HEADER_H
-#define MEU_HEADER_H
+exemplo.o:	exemplo.h
+	gcc -c exemplo.c
 
-// Declaração de uma função
-int somar(int a, int b);
+clean:
+	rm -rf *.o
 
-// Definição de uma constante
-#define PI 3.14159
-
-#endif // MEU_HEADER_H
-
+run:
+	./main
 
 
