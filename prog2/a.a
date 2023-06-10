@@ -78,7 +78,16 @@ void cadastrar(int* capacidade , Serie** serie)
     (*serie)[*capacidade-1].Nome[strcspn((*serie)[*capacidade-1].Nome, "\n")] = '\0';
     setbuf(stdin, NULL);
 
-   
+    for (int i = 0; i < *capacidade - 1; i++)
+    {
+        if (strcasecmp((*serie)[i].Nome, (*serie)[*capacidade-1].Nome) == 0)
+        {
+            printf("Essa série já está cadastrada. Por favor, insira outro nome.\n");
+            (*capacidade)--;  // Diminuir o tamanho para cancelar o cadastro da série repetida
+            return cadastrar(capacidade,serie );  
+        }
+    }
+
     printf("digite o genero\n:");
     fgets((*serie)[*capacidade - 1].Genero, sizeof((*serie)[*capacidade-1].Genero), stdin);
     (*serie)[*capacidade - 1].Genero[strcspn((*serie)[*capacidade-1].Genero, "\n")] = '\0';
