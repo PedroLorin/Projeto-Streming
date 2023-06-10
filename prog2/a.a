@@ -1,42 +1,118 @@
-#ifndef exemplo.h
-#define exemplo.h
-
-// Declaração de uma função
-int somar(int a, int b);
-
-// Definição de uma constante
-#define PI 3.14159
-
-#endif // exemplo
 
 
-#include <stdio.h>
-#include "exemplo.h" // Inclui o cabeçalho criado
+#include <stdio.h>  //bibliotecas que serão usadas no código
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
 
-int somar(int a, int b) {
-    return a + b;
+
+/*efina uma estrutura Série contendo: Código (contador inteiro), Título (string), Gênero
+(String), Classificação(int), Plataforma(String), Quantidade de temporadas(int),
+Quantidade de episódios e cada temporada (vetor de inteiros), duração média dos
+episódios. Deverá permitir cadastrar (inserir/listar/pesquisar/alterar/excluir) as séries
+disponíveis para serem assistidas nas plataformas. Essa relação deve aumentar e
+diminuir dinamicamente.*/
+
+typedef struct {
+
+    int id;
+    char Nome[101];
+    char Genero[41];
+    int Classificacao;
+    char Plataforma[41];
+    int QuantidadeTemporadas;
+    int QuantidadeEpisodiosTotais;
+    int *QuantidadeEpisodiosPorTemporada;
+    int DuracaoMediaEpisodios;
+
+} Serie;
+
+
+    int main(){
+    int capacidade=258;
+
+    Serie* serie = (Serie*)malloc(capacidade * sizeof(Serie));
+
+
+    FILE * arquivo = fopen("streaming_db.txt", "r");
+
+    if (arquivo == NULL) 
+    {
+        perror("Erro ao abrir o arquivo.\n");
+        return 1;
+     }//if
+
+
+
+
+    int primeiraLinha = 1; // Variável de controle para ignorar a primeira linha
+
+   
+
+
+
+
+    for (int i = 0; i < capacidade; i++)
+    {
+
+        if (primeiraLinha) 
+        {
+             primeiraLinha = 0; // Desativa a variável de controle após a primeira linha
+            fscanf(arquivo, "%*[^\n]"); // Ignora a primeira linha
+            fscanf(arquivo, "\n"); // Lê o caractere de nova linha
+        }
+            
+        fscanf(arquivo, "%d,", &serie[i].id); // Lê o campo 'id' e descarta a vírgula
+        fscanf(arquivo, "%[^,\n],", serie[i].Nome); // Lê o campo 'Nome' e descarta a vírgula
+        fscanf(arquivo, "%[^,\n],", serie[i].Genero); // Lê o campo 'Genero' e descarta a vírgula
+        fscanf(arquivo, "%d,", &serie[i].Classificacao); // Lê o campo 'Classificacao' e descarta a vírgula
+        fscanf(arquivo, "%[^,\n],", serie[i].Plataforma);
+        fscanf(arquivo, "%d,", &serie[i].DuracaoMediaEpisodios); // Lê o campo 'DuracaoMediaEpisodios' e descarta a vírgula
+        fscanf(arquivo, "%d,", &serie[i].QuantidadeTemporadas); 
+
+        int realoca = serie[i].QuantidadeTemporadas;
+        serie[i].QuantidadeEpisodiosPorTemporada = malloc(realoca * sizeof(int));
+        
+
+                
+            for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
+                fscanf(arquivo, "%d,",&serie[i].QuantidadeEpisodiosPorTemporada[j]);
+    }
+                
+
+
+  printf("%d ", serie[i].id);
+printf("%s ", serie[i].Nome);
+printf("%s ", serie[i].Genero);
+printf("%d ", serie[i].Classificacao);
+printf("%s ", serie[i].Plataforma);
+printf("%d ", serie[i].DuracaoMediaEpisodios);
+printf("%d ", serie[i].QuantidadeTemporadas);
+
+
+        for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
+        printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
 }
+        printf("\n");
+       
+    }//for
+  
 
-int main() {
-    int num1 = 5;
-    int num2 = 3;
-    int resultado = somar(num1, num2);
+   
 
-    printf("A soma de %d e %d é: %d\n", num1, num2, resultado);
+
+
+
+
+
+
+    fclose(arquivo);
+    for (int i = 0; i < capacidade; i++) {
+        free(serie[i].QuantidadeEpisodiosPorTemporada);
+    }
+    free(serie);
+
 
     return 0;
 }
-
-all: exemplo.o
-	gcc exemplo.o main.c -o main
-
-exemplo.o:	exemplo.h
-	gcc -c exemplo.c
-
-clean:
-	rm -rf *.o
-
-run:
-	./main
-
 
