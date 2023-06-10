@@ -1,20 +1,10 @@
 
-
-#include <stdio.h>  //bibliotecas que serão usadas no código
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
 
-
-/*efina uma estrutura Série contendo: Código (contador inteiro), Título (string), Gênero
-(String), Classificação(int), Plataforma(String), Quantidade de temporadas(int),
-Quantidade de episódios e cada temporada (vetor de inteiros), duração média dos
-episódios. Deverá permitir cadastrar (inserir/listar/pesquisar/alterar/excluir) as séries
-disponíveis para serem assistidas nas plataformas. Essa relação deve aumentar e
-diminuir dinamicamente.*/
-
 typedef struct {
-
     int id;
     char Nome[101];
     char Genero[41];
@@ -24,95 +14,76 @@ typedef struct {
     int QuantidadeEpisodiosTotais;
     int *QuantidadeEpisodiosPorTemporada;
     int DuracaoMediaEpisodios;
-
 } Serie;
 
+void lerSeries(Serie *serie, int capacidade, FILE *arquivo) {
+    int primeiraLinha = 1;
 
-    int main(){
-    int capacidade=258;
-
-    Serie* serie = (Serie*)malloc(capacidade * sizeof(Serie));
-
-
-    FILE * arquivo = fopen("streaming_db.txt", "r");
-
-    if (arquivo == NULL) 
-    {
-        perror("Erro ao abrir o arquivo.\n");
-        return 1;
-     }//if
-
-
-
-
-    int primeiraLinha = 1; // Variável de controle para ignorar a primeira linha
-
-   
-
-
-
-
-    for (int i = 0; i < capacidade; i++)
-    {
-
-        if (primeiraLinha) 
-        {
-             primeiraLinha = 0; // Desativa a variável de controle após a primeira linha
-            fscanf(arquivo, "%*[^\n]"); // Ignora a primeira linha
-            fscanf(arquivo, "\n"); // Lê o caractere de nova linha
+    for (int i = 0; i < capacidade; i++) {
+        if (primeiraLinha) {
+            primeiraLinha = 0;
+            fscanf(arquivo, "%*[^\n]");
+            fscanf(arquivo, "\n");
         }
-            
-        fscanf(arquivo, "%d,", &serie[i].id); // Lê o campo 'id' e descarta a vírgula
-        fscanf(arquivo, "%[^,\n],", serie[i].Nome); // Lê o campo 'Nome' e descarta a vírgula
-        fscanf(arquivo, "%[^,\n],", serie[i].Genero); // Lê o campo 'Genero' e descarta a vírgula
-        fscanf(arquivo, "%d,", &serie[i].Classificacao); // Lê o campo 'Classificacao' e descarta a vírgula
+
+        fscanf(arquivo, "%d,", &serie[i].id);
+        fscanf(arquivo, "%[^,\n],", serie[i].Nome);
+        fscanf(arquivo, "%[^,\n],", serie[i].Genero);
+        fscanf(arquivo, "%d,", &serie[i].Classificacao);
         fscanf(arquivo, "%[^,\n],", serie[i].Plataforma);
-        fscanf(arquivo, "%d,", &serie[i].DuracaoMediaEpisodios); // Lê o campo 'DuracaoMediaEpisodios' e descarta a vírgula
-        fscanf(arquivo, "%d,", &serie[i].QuantidadeTemporadas); 
+        fscanf(arquivo, "%d,", &serie[i].DuracaoMediaEpisodios);
+        fscanf(arquivo, "%d,", &serie[i].QuantidadeTemporadas);
 
         int realoca = serie[i].QuantidadeTemporadas;
         serie[i].QuantidadeEpisodiosPorTemporada = malloc(realoca * sizeof(int));
-        
-
-                
-            for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
-                fscanf(arquivo, "%d,",&serie[i].QuantidadeEpisodiosPorTemporada[j]);
-    }
-                
-
-
-  printf("%d ", serie[i].id);
-printf("%s ", serie[i].Nome);
-printf("%s ", serie[i].Genero);
-printf("%d ", serie[i].Classificacao);
-printf("%s ", serie[i].Plataforma);
-printf("%d ", serie[i].DuracaoMediaEpisodios);
-printf("%d ", serie[i].QuantidadeTemporadas);
-
 
         for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
-        printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
+            fscanf(arquivo, "%d,", &serie[i].QuantidadeEpisodiosPorTemporada[j]);
+        }
+    }
 }
+
+void imprimirSeries(Serie *serie, int capacidade) {
+    for (int i = 0; i < capacidade; i++) {
+        printf("%d ", serie[i].id);
+        printf("%s ", serie[i].Nome);
+        printf("%s ", serie[i].Genero);
+        printf("%d ", serie[i].Classificacao);
+        printf("%s ", serie[i].Plataforma);
+        printf("%d ", serie[i].DuracaoMediaEpisodios);
+        printf("%d ", serie[i].QuantidadeTemporadas);
+
+        for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
+            printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
+        }
+
         printf("\n");
-       
-    }//for
-  
+    }
+}
 
-   
-
-
-
-
-
-
-
-    fclose(arquivo);
+void liberarMemoria(Serie *serie, int capacidade) {
     for (int i = 0; i < capacidade; i++) {
         free(serie[i].QuantidadeEpisodiosPorTemporada);
     }
     free(serie);
+}
 
+int main() {
+    int capacidade = 258;
+    Serie *serie = (Serie *)malloc(capacidade * sizeof(Serie));
+
+    FILE *arquivo = fopen("streaming_db.txt", "r");
+
+    if (arquivo == NULL) {
+        perror("Erro ao abrir o arquivo.\n");
+        return 1;
+    }
+
+    lerSeries(serie, capacidade, arquivo);
+    imprimirSeries(serie, capacidade);
+    liberarMemoria(serie, capacidade);
+
+    fclose(arquivo);
 
     return 0;
 }
-
