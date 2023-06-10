@@ -17,15 +17,10 @@ typedef struct {
 } Serie;
 
 void lerSeries(Serie *serie, int capacidade, FILE *arquivo) {
-    int primeiraLinha = 1;
+  
 
-    for (int i = 0; i < capacidade; i++) {
-        if (primeiraLinha) {
-            primeiraLinha = 0;
-            fscanf(arquivo, "%*[^\n]");
-            fscanf(arquivo, "\n");
-        }
-
+    for (int i = 0; i < capacidade; i++) 
+    {
         fscanf(arquivo, "%d,", &serie[i].id);
         fscanf(arquivo, "%[^,\n],", serie[i].Nome);
         fscanf(arquivo, "%[^,\n],", serie[i].Genero);
@@ -43,25 +38,84 @@ void lerSeries(Serie *serie, int capacidade, FILE *arquivo) {
     }
 }
 
-void imprimirSeries(Serie *serie, int capacidade) {
-    for (int i = 0; i < capacidade; i++) {
-        printf("%d ", serie[i].id);
-        printf("%s ", serie[i].Nome);
-        printf("%s ", serie[i].Genero);
-        printf("%d ", serie[i].Classificacao);
-        printf("%s ", serie[i].Plataforma);
-        printf("%d ", serie[i].DuracaoMediaEpisodios);
-        printf("%d ", serie[i].QuantidadeTemporadas);
-
-        for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
+void imprimirSeries(Serie *serie, int capacidade)
+{
+    printf("Aqui estao todas series cadastradas\n");
+    for (int i = 0; i < capacidade; i++) 
+    {
+         printf("%d-", serie[i].id);
+        printf("%-40s " , serie[i].Nome);
+        printf("Genero:%-20s ", serie[i].Genero);
+        printf("Clasificacao:%-5d ", serie[i].Classificacao);
+        printf("Plataforma:%-15s ", serie[i].Plataforma);
+        printf("Duracao media por ep:%-5d ", serie[i].DuracaoMediaEpisodios);
+        printf("Quatidade de temporadas:%-5d ", serie[i].QuantidadeTemporadas);
+       
+        printf("episodios por temporada: ");
+        for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) 
+        {
             printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
-        }
-
+        }   
+        printf("\n");
+        printf("____________________________________________________________________________________________________________________________________________________________________________________________________________");
+        printf("\n");
+       
         printf("\n");
     }
 }
 
-void liberarMemoria(Serie *serie, int capacidade) {
+
+void cadastrar(int* capacidade , Serie** serie)
+{
+    (*capacidade)++;
+  
+    *serie = (Serie*)realloc(*serie, (*capacidade) * sizeof(Serie));
+    (*serie)[*capacidade-1].id= *capacidade;
+    setbuf(stdin,NULL);
+ 
+    printf("digite o nome da serie\n:");
+    fgets((*serie)[*capacidade-1].Nome, sizeof((*serie)[*capacidade-1].Nome), stdin);
+    (*serie)[*capacidade-1].Nome[strcspn((*serie)[*capacidade-1].Nome, "\n")] = '\0';
+    setbuf(stdin, NULL);
+
+   
+    printf("digite o genero\n:");
+    fgets((*serie)[*capacidade - 1].Genero, sizeof((*serie)[*capacidade-1].Genero), stdin);
+    (*serie)[*capacidade - 1].Genero[strcspn((*serie)[*capacidade-1].Genero, "\n")] = '\0';
+    setbuf(stdin, NULL);
+
+    printf("digite a classificacao\n");
+    scanf("%d", &(*serie)[*capacidade - 1].Classificacao);
+    
+    setbuf(stdin, NULL);
+    printf("digite plataforma\n");
+    fgets((*serie)[*capacidade-1].Plataforma, sizeof((*serie)[*capacidade-1].Plataforma), stdin);
+    (*serie)[*capacidade-1].Plataforma[strcspn((*serie)[*capacidade-1].Plataforma, "\n")] = '\0';
+    setbuf(stdin, NULL);
+
+    printf("diga a dura;'ao media\n:");
+    scanf("%d", &(*serie)[*capacidade - 1].DuracaoMediaEpisodios);
+    
+    printf("digite a quantia de temporadas\n:");
+    scanf("%d", &(*serie)[*capacidade - 1].QuantidadeTemporadas);
+
+
+        int realoca = (*serie)[*capacidade - 1].QuantidadeTemporadas;
+       (*serie)[*capacidade-1].QuantidadeEpisodiosPorTemporada = malloc(realoca * sizeof(int));
+     for (int i = 0; i < (*serie)[*capacidade-1].QuantidadeTemporadas; i++)
+    {   
+        printf("digite a quantia de episodios da %d temporada:",i+1);
+        scanf("%d",&(*serie)[*capacidade-1].QuantidadeEpisodiosPorTemporada[i]);
+    }  
+    imprimirSeries(*serie, *capacidade);
+
+
+
+}
+
+
+void liberarMemoria(Serie *serie, int capacidade) 
+{
     for (int i = 0; i < capacidade; i++) {
         free(serie[i].QuantidadeEpisodiosPorTemporada);
     }
@@ -81,6 +135,9 @@ int main() {
 
     lerSeries(serie, capacidade, arquivo);
     imprimirSeries(serie, capacidade);
+    cadastrar(&capacidade,&serie );
+    
+
     liberarMemoria(serie, capacidade);
 
     fclose(arquivo);
