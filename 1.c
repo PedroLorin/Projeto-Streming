@@ -215,8 +215,8 @@ int main() {
     }
 
     lerSeries(serie, capacidade, arquivo);
-    imprimirSeries(serie, capacidade);
-    cadastrar(&capacidade,&serie );
+    //imprimirSeries(serie, capacidade);
+    //cadastrar(&capacidade,&serie );
     apagar(&capacidade,&serie);
 
     liberarMemoria(serie, capacidade);
