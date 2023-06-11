@@ -57,7 +57,8 @@ void imprimirSeries(Serie *serie, int capacidade)
             printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
         }   
         printf("\n");
-    
+       // printf");
+        printf("\n");
        
         printf("\n");
     }
