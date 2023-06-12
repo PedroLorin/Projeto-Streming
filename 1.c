@@ -21,6 +21,8 @@ void lerSeries(Serie *serie, int QuantidadeSeries, FILE *arquivo) {
 
     for (int i = 0; i < QuantidadeSeries; i++) 
     {
+        serie[i].QuantidadeEpisodiosTotais = 0;
+
         fscanf(arquivo, "%d,", &serie[i].id);
         fscanf(arquivo, "%[^,\n],", serie[i].Nome);
         fscanf(arquivo, "%[^,\n],", serie[i].Genero);
@@ -36,8 +38,7 @@ void lerSeries(Serie *serie, int QuantidadeSeries, FILE *arquivo) {
 
             fscanf(arquivo, "%d,", &serie[i].QuantidadeEpisodiosPorTemporada[j]);
       
-
-
+            serie[i].QuantidadeEpisodiosTotais=serie[i].QuantidadeEpisodiosTotais+serie[i].QuantidadeEpisodiosPorTemporada[j];
         }
     }
 }
@@ -60,11 +61,9 @@ void imprimirSeries(Serie *serie, int QuantidadeSeries)
         {
             printf("%d ", serie[i].QuantidadeEpisodiosPorTemporada[j]);
         }   
-        printf("\n");
-      
-        printf("\n");
-       
-        printf("\n");
+
+        printf("    Episodios totais: %-5d ",serie[i].QuantidadeEpisodiosTotais);
+        printf("\n \n \n");
     }
 }
 
@@ -96,7 +95,7 @@ int cadastrar(int QuantidadeSeries , Serie *serie)
     
     
     
-
+    serie[QuantidadeSeries-1].QuantidadeEpisodiosTotais= 0;
     printf("digite o genero\n:");
     fgets(serie[QuantidadeSeries - 1].Genero, 12, stdin);
     serie[QuantidadeSeries - 1].Genero[strcspn(serie[QuantidadeSeries-1].Genero, "\n")] = '\0';
@@ -126,12 +125,186 @@ int cadastrar(int QuantidadeSeries , Serie *serie)
 
         printf("digite a quantia de episodios da %d temporada:",i+1);
         scanf("%d", &serie[QuantidadeSeries-1].QuantidadeEpisodiosPorTemporada[i]);
+         serie[QuantidadeSeries-1].QuantidadeEpisodiosTotais=serie[QuantidadeSeries-1].QuantidadeEpisodiosTotais+serie[QuantidadeSeries-1].QuantidadeEpisodiosPorTemporada[i];
 
     }  
 
     return QuantidadeSeries;
 
 }
+
+
+
+
+void Alterar(int QuantidadeSeries, Serie *serie)
+{
+    char alterar[101];
+    int encontrar=0;
+    int contador=-1;
+    char placeHolder[45];
+    int realoca=0;
+    
+    setbuf(stdin, NULL);
+    printf("Digite o nome da série que deseja realizar modificacoes no dados meu truta: ");
+    fgets( alterar, sizeof( alterar), stdin);
+    alterar[strcspn( alterar, "\n")] = '\0';
+    setbuf(stdin, NULL);
+
+    for (int i = 0; i < QuantidadeSeries ; i++)
+    {
+        contador++;
+        if (strcasecmp( alterar, serie[i].Nome) != 0)
+        { 
+            encontrar =1;
+        }else
+        {
+            encontrar =0;
+            break;
+
+
+        }//else
+
+    }//for
+        if(encontrar == 1)
+        {
+            printf("serie n encontrada, tente outro nome\n");
+            
+            Alterar(QuantidadeSeries,serie);
+        }else
+        {
+            int caso=0;
+
+            printf("digite 1 para mudar o nome da serie\n");
+            printf("digite 2 para mudar o genero da serie\n");
+            printf("digite 3 para mudar a clasificacao da serie\n");
+            printf("digite 4 para mudar plataforma da serie\n");
+            printf("digite 5 para mudar duracao por episodio  da serie\n");
+            printf("digite 6 para mudar quantia de temporadas da serie\n");
+            scanf("%d",&caso);
+
+                switch (caso) {
+            case 1:
+
+                printf(" vc escolheu mudar o nome da serie ");
+
+            
+                setbuf(stdin, NULL);
+                printf("Digite o nome da série que deseja realizar modificacoes no dados meu truta: ");
+                fgets( placeHolder, sizeof(placeHolder), stdin);
+                placeHolder[strcspn( placeHolder, "\n")] = '\0';
+                setbuf(stdin, NULL);
+
+                strcpy(serie[contador].Nome,placeHolder);
+
+
+            break;
+            case 2:
+                    
+                    printf("Você escolheu mudar o genero da serie \n");
+                    setbuf(stdin, NULL);      
+                    
+                    printf("Digite os novos generos no modelo genero1/genero2... :\n"); 
+                    
+                    fgets( placeHolder, sizeof(placeHolder), stdin);
+                    placeHolder[strcspn( placeHolder, "\n")] = '\0';
+                    setbuf(stdin, NULL);
+                    
+                    strcpy(serie[contador].Genero,placeHolder);
+                      
+                    
+            break;
+
+            case 3:
+                    printf("Você escolheu mudar a classificacao da serie.\n");
+                    
+                    printf("Digite a nova classificacao da serie:");
+
+                    scanf("%d",&serie[contador].Classificacao);
+
+            break;
+
+            case 4:
+                    
+                    printf("Voce escolheu mudar a plataforma de streaming da serie.\n");
+
+                    printf("Digite as novas plataformas de streaming\n");
+
+
+                    strcpy(serie[contador].Plataforma,placeHolder);
+
+              
+                    break;  
+            
+            case 5:
+                    printf("Você escolheu mudar a duracao media dos episodios da serie.\n");
+                
+                    printf("digite a nova duracao media:");
+
+                    scanf("%d",&serie[contador].DuracaoMediaEpisodios);
+
+
+
+            break; 
+            case 6:
+                printf("Você escolheu mudar a quantia de temporadas da serie.\n");
+                    
+                printf("digite a quantia de temporadas:");
+
+                scanf("%d",&serie[contador].QuantidadeTemporadas);
+
+
+                printf("digite a nova distribuicao de episodios por temporada");
+
+                realoca = serie[contador].QuantidadeTemporadas;
+                serie[contador].QuantidadeEpisodiosPorTemporada = realloc(serie[contador].QuantidadeEpisodiosPorTemporada, realoca * sizeof(int));
+                 serie[contador].QuantidadeEpisodiosTotais =  0;
+                for (int i = 0; i < realoca; i++)
+                { 
+
+                    printf("digite a quantia de episodios da %d temporada:",i+1);
+                    scanf("%d", &serie[contador].QuantidadeEpisodiosPorTemporada[i]);
+                    serie[contador].QuantidadeEpisodiosTotais=serie[contador].QuantidadeEpisodiosTotais+serie[contador].QuantidadeEpisodiosPorTemporada[i];
+
+                    
+                } 
+
+            case 7:
+                printf("Você escolheu mudar a quantia de episodios das temporadas\n");
+                    
+               
+
+
+                printf("digite a nova distribuicao de episodios por temporada");
+
+                for (int i = 0; i < serie[contador].QuantidadeTemporadas; i++)
+                { 
+
+                    printf("digite a quantia de episodios da %d temporada:",i+1);
+                    scanf("%d", &serie[contador].QuantidadeEpisodiosPorTemporada[i]);
+                    serie[contador].QuantidadeEpisodiosTotais=serie[contador].QuantidadeEpisodiosTotais+serie[contador].QuantidadeEpisodiosPorTemporada[i];
+
+                    
+                } 
+                            
+
+
+            break; 
+
+
+
+
+
+                default:
+                    printf("Número inválido.\n");
+                    
+                Alterar(QuantidadeSeries, serie);
+
+            }
+
+            
+          
+        }//else
+}// void alterar
 
 
 
@@ -177,7 +350,7 @@ void apagar(int QuantidadeSeries, Serie *serie)
             strcpy(serie[contador].Plataforma, serie[QuantidadeSeries - 1].Plataforma);
             serie[contador].DuracaoMediaEpisodios=serie[QuantidadeSeries -1].DuracaoMediaEpisodios;
             serie[contador].QuantidadeTemporadas=serie[QuantidadeSeries-1].QuantidadeTemporadas;
-
+            serie[contador].QuantidadeEpisodiosTotais=serie[QuantidadeSeries-1].QuantidadeEpisodiosTotais;
 
             int realoca = serie[contador].QuantidadeTemporadas;
            serie[contador].QuantidadeEpisodiosPorTemporada = realloc(serie[contador].QuantidadeEpisodiosPorTemporada ,realoca * sizeof(int));
@@ -186,6 +359,7 @@ void apagar(int QuantidadeSeries, Serie *serie)
             {
                 serie[contador].QuantidadeEpisodiosPorTemporada[i]=serie[QuantidadeSeries-1].QuantidadeEpisodiosPorTemporada[i];
             }//for
+
             
             
 
@@ -274,6 +448,11 @@ int main() {
     QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
     apagar(QuantidadeSeries, serie);
     BuscaGenero(serie,QuantidadeSeries);
+    Alterar(QuantidadeSeries, serie);
+ 
+
+
+
     free(serie);
     fclose(arquivo);
 
