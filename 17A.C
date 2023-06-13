@@ -120,7 +120,7 @@ void lerSeriesBinario (Serie *serie, int QuantidadeSeries, FILE *arquivo) {
         serie[i].QuantidadeEpisodiosTotais = 0;
 
         fread(&serie[i].id, sizeof(int), 1, arquivo);
-        fread(serie[i].Nome, sizeof(char), 40, arquivo);
+        fread(serie[i].Nome, sizeof(char), 101, arquivo);
         fread(serie[i].Genero, sizeof(char), 41, arquivo);
         fread(&serie[i].Classificacao, sizeof(int), 1, arquivo);
         fread(serie[i].Plataforma, sizeof(char), 41, arquivo);
@@ -240,7 +240,7 @@ int cadastrar(int QuantidadeSeries , Serie *serie)
 
 
     int realoca = serie[QuantidadeSeries - 1].QuantidadeTemporadas;
-    serie[QuantidadeSeries-1].QuantidadeEpisodiosPorTemporada = malloc(realoca * sizeof(int));
+    serie[QuantidadeSeries-1].QuantidadeEpisodiosPorTemporada = (int*)malloc(realoca * sizeof(int));
     
     for (int i = 0; i < serie[QuantidadeSeries-1].QuantidadeTemporadas; i++)
     { 
@@ -367,8 +367,9 @@ void Alterar(int QuantidadeSeries, Serie *serie)
 
                 printf("digite a nova distribuicao de episodios por temporada");
                 realoca = serie[contador].QuantidadeTemporadas;
-                serie[contador].QuantidadeEpisodiosPorTemporada = realloc(serie[contador].QuantidadeEpisodiosPorTemporada, realoca * sizeof(int));
+                serie[contador].QuantidadeEpisodiosPorTemporada = (int*)realloc(serie[contador].QuantidadeEpisodiosPorTemporada, realoca * sizeof(int));
                 serie[contador].QuantidadeEpisodiosTotais =  0;
+                
                 
                 for (int i = 0; i < realoca; i++)
                 { 
@@ -638,22 +639,22 @@ int main() {
 
     Historico *historico =(Historico*)malloc(indiceHistorico * sizeof(Historico)); 
 
-    FILE *arquivo = fopen("streaming_db.txt", "r");
+    FILE *arquivo = fopen("streaming_db.dat", "rb");
 
     if (arquivo == NULL) {
         perror("Erro ao abrir o arquivo.\n");
         return 1;
     }
 
-    lerSeries(serie, QuantidadeSeries, arquivo);
-    //lerSeriesBinario(serie, QuantidadeSeries, arquivo);
-  //  imprimirSeries(serie, QuantidadeSeries);
+    //lerSeries(serie, QuantidadeSeries, arquivo);
+    lerSeriesBinario(serie, QuantidadeSeries, arquivo);
+    imprimirSeries(serie, QuantidadeSeries);
     //QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
     //apagar(QuantidadeSeries, serie);
    // BuscaGenero(serie,QuantidadeSeries);
    // Alterar(QuantidadeSeries, serie);
    // Pesquisa(serie,QuantidadeSeries);
-    indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
+   // indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
    //salvaDados(serie,QuantidadeSeries);
 
 
