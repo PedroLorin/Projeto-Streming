@@ -23,6 +23,7 @@ typedef struct {
     char Nome[101];
     int UltimaTemporadaAssistida;
     int UltimoEpisodio;
+    
 
 } Historico;
 
@@ -50,7 +51,7 @@ int salvaHistorico (Serie *serie, int QuantidadeSeries,  Historico *historico, i
             {
                 
                 indiceHistorico ++;
-                  printf("Aqui estao os dados bases da serie pesquisada"); 
+                  printf("Aqui estao os dados bases da serie pesquisada\n\n"); 
                 contadorSerie++;
                 printf("%d-", serie[i].id);
                 printf("%-40s " , serie[i].Nome);
@@ -73,15 +74,15 @@ int salvaHistorico (Serie *serie, int QuantidadeSeries,  Historico *historico, i
                 strcpy(historico[indiceHistorico].Nome,serie[i].Nome);
 
 
-                printf("digite a ultima temporada assistida");
+                printf("digite a ultima temporada assistida: ");
                 scanf("%d",&historico[indiceHistorico].UltimaTemporadaAssistida);
 
-                printf("digite o ultimo Episodio assistido");
+                printf("digite o ultimo Episodio assistido: ");
                 scanf("%d",&historico[indiceHistorico].UltimoEpisodio);
-                
-                
+            
                
                 
+                printf("Os dados do historico da serie %s foi atualizado!! ",historico[indiceHistorico].Nome); 
                  break;
             }//if
         
@@ -627,22 +628,103 @@ void salvaDados(Serie *serie, int QuantidadeSeries)
 
         
         
+void ArquivoHistorico( Historico *historico, int indiceHistorico)
+{
+
+    char pulaLinha= '\n';
+
+
+
+     FILE *arquivohistorico = fopen("Histirico.dat", "wb");
+
+    if (arquivohistorico == NULL) {
+        perror("Erro ao abrir o arquivo.\n");
+        
+    }else{
+
+    fwrite(&indiceHistorico,sizeof(int),1,arquivohistorico);
+    fwrite(&pulaLinha, sizeof(char), 1, arquivohistorico);
+    for (int i = 0; i < indiceHistorico; i++)
+    {
+        fwrite(historico[i].Nome,sizeof(char),101,arquivohistorico);
+        fwrite(&historico[i].UltimaTemporadaAssistida,sizeof(int),1,arquivohistorico);
+        fwrite(&historico[i].UltimoEpisodio,sizeof(int),1,arquivohistorico);
+           
+    
+           
+  
+       
+        }//for
+
+    }//else
+    printf("\n");
+    
+    
+    fclose(arquivohistorico);
+
+
+    
+}//void arquivo historico
+
+
+
+int lerHistoricoBinario(Historico* historico ,int indiceHistorico)
+{
+
+char pulaLinha= '\n';//ta aqui na leitura pra ler o \n na primeira linha feito na escrita
+
+
+
+     FILE *arquivohistorico = fopen("Histirico.dat", "wb");
+
+    if (arquivohistorico == NULL) {
+        perror("Erro ao abrir o arquivo.\n");
+        
+    }else{
+
+    fread(&indiceHistorico,sizeof(int),1,arquivohistorico);
+    fread(&pulaLinha, sizeof(char), 1, arquivohistorico);
+    for (int i = 0; i < indiceHistorico; i++)
+    {
+        fread(historico[i].Nome,sizeof(char),101,arquivohistorico);
+        fread(&historico[i].UltimaTemporadaAssistida,sizeof(int),1,arquivohistorico);
+        fread(&historico[i].UltimoEpisodio,sizeof(int),1,arquivohistorico);
+           
+    
+           
+  
+       
+        }//for
+
+    }//else
+    printf("\n");
+    
+    
+    fclose(arquivohistorico);
+
+    return indiceHistorico;
+
+
+
+}//int lerHistoricoBinario
+
+
 
 int main() {
     int indiceHistorico = 0;
     int QuantidadeSeries = 258;
     int menu;
     Serie *serie = (Serie*) malloc(QuantidadeSeries * sizeof(Serie));
-
-
     Historico *historico =(Historico*)malloc(indiceHistorico * sizeof(Historico)); 
+
+
 
     FILE *arquivo = fopen("streaming_db.dat", "rb");
 
     if (arquivo == NULL) {
         perror("Erro ao abrir o arquivo Binario , tentaremos excutar o arquivo csv.\n");
 
-        FILE *arquivo = fopen("streaming_db.txt", "r");
+        FILE *arquivo = fopen("streaming_db.csv", "r");
 
          if (arquivo == NULL) {
              perror("Erro ao abrir o arquivo CSV.\n");
@@ -655,7 +737,29 @@ int main() {
 
         lerSeriesBinario(serie, QuantidadeSeries, arquivo);
 
-    }
+    }//else
+    //esse if acima serve para conferir se tem o arquivo binario.
+
+
+
+
+    FILE *arquivoCarregaHistorico = fopen("Histirico.dat", "rb");
+
+    if (arquivoCarregaHistorico== NULL) {
+        perror("Erro ao Abrir historico, por favor assim que possivel adicione seus dados!!!  \n");
+
+   
+
+    }else{
+    indiceHistorico = lerHistoricoBinario(historico,indiceHistorico);
+    
+    fclose(arquivoCarregaHistorico);
+
+    }//else
+    //esse if acima serve para conferir se tem o arquivo binario.
+
+
+
 
 
 
@@ -675,42 +779,44 @@ int main() {
 
       scanf("%d",&menu);
 
-
        switch (menu){
 
          case 1:
-          imprimirSeries(serie, QuantidadeSeries);
-           break;
+            imprimirSeries(serie, QuantidadeSeries);
+        break;
 
-         case 2: 
-          Pesquisa(serie,QuantidadeSeries);
-            break;
+        case 2: 
+            Pesquisa(serie,QuantidadeSeries);
+        break;
 
-         case 3:
-          BuscaGenero(serie,QuantidadeSeries);
-           break;
+        case 3:
+            BuscaGenero(serie,QuantidadeSeries);
+        break;
 
-         case 4:
-          indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
-           break;
+        case 4:
+            indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
+        break;
 
-         case 5:
-          QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
-            break;
-         case 6:
-          Alterar(QuantidadeSeries, serie);
-           break;
+        case 5:
+             QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
+        break;
+        
+        case 6:
+            Alterar(QuantidadeSeries, serie);
+        break;
 
-         case 7: 
-          apagar(QuantidadeSeries, serie);
-           break;
+        case 7: 
+            apagar(QuantidadeSeries, serie);
+        break;
 
-         case 8:
-          salvaDados(serie,QuantidadeSeries);
-           break;
+        
+        case 8:
+            salvaDados(serie,QuantidadeSeries);
+            ArquivoHistorico(historico,indiceHistorico);
+        break;
 
-         case 9:
-           break; 
+        case 9:
+        break;
        }
 
      }
