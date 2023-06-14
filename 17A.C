@@ -576,7 +576,6 @@ void BuscaGenero(Serie *serie, int QuantidadeSeries)
     }//if
 }//void buscaGeneros
             
-            
 
 
 void salvaDados(Serie *serie, int QuantidadeSeries)
@@ -589,39 +588,36 @@ void salvaDados(Serie *serie, int QuantidadeSeries)
     if (arquivobin == NULL) {
         perror("Erro ao abrir o arquivo.\n");
         
-    }//if
+    }else{
+
 
     for (int i = 0; i < QuantidadeSeries; i++)
     {
         fwrite(&serie[i].id,sizeof(int),1,arquivobin);
-            printf("%d ",serie[i].id);
+           
       
         fwrite(serie[i].Nome,sizeof(char),101,arquivobin);
-               printf("%s ",serie[i].Nome);
-        
+              
         fwrite(serie[i].Genero,sizeof(char),41,arquivobin);
-                printf("%s ",serie[i].Genero);
-        
+               
         fwrite(&serie[i].Classificacao,sizeof(int),1,arquivobin);
-             printf("%d ",serie[i].Classificacao);
-        
+           
         fwrite(serie[i].Plataforma,sizeof(char),41,arquivobin);
-                 printf("%s ",serie[i].Plataforma);
+               
        
         fwrite(&serie[i].DuracaoMediaEpisodios,sizeof(int),1,arquivobin);
-              printf("%d ",serie[i].DuracaoMediaEpisodios);
+             
        
         fwrite(&serie[i].QuantidadeTemporadas,sizeof(int),1,arquivobin);
-               printf("%d ",serie[i].QuantidadeTemporadas);
-        
+               
 
         for (int j = 0; j < serie[i].QuantidadeTemporadas; j++) {
 
             fwrite(&serie[i].QuantidadeEpisodiosPorTemporada[j],sizeof(int),1,arquivobin);
-                printf("%d ",serie[i].QuantidadeEpisodiosPorTemporada[j]);
-            
+                
         }//for
 
+    }//else
     printf("\n");
     }//for
     
@@ -630,10 +626,12 @@ void salvaDados(Serie *serie, int QuantidadeSeries)
 }//void salva dados
 
         
+        
 
 int main() {
     int indiceHistorico = 0;
     int QuantidadeSeries = 258;
+    int menu;
     Serie *serie = (Serie*) malloc(QuantidadeSeries * sizeof(Serie));
 
 
@@ -642,30 +640,87 @@ int main() {
     FILE *arquivo = fopen("streaming_db.dat", "rb");
 
     if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo.\n");
-        return 1;
+        perror("Erro ao abrir o arquivo Binario , tentaremos excutar o arquivo csv.\n");
+
+        FILE *arquivo = fopen("streaming_db.txt", "r");
+
+         if (arquivo == NULL) {
+             perror("Erro ao abrir o arquivo CSV.\n");
+              return 1;
+        }
+        lerSeries(serie, QuantidadeSeries, arquivo);
+        salvaDados(serie,QuantidadeSeries);
+
+    }else{
+
+        lerSeriesBinario(serie, QuantidadeSeries, arquivo);
+
     }
 
-    //lerSeries(serie, QuantidadeSeries, arquivo);
-    lerSeriesBinario(serie, QuantidadeSeries, arquivo);
-    imprimirSeries(serie, QuantidadeSeries);
-    //QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
-    //apagar(QuantidadeSeries, serie);
-   // BuscaGenero(serie,QuantidadeSeries);
-   // Alterar(QuantidadeSeries, serie);
-   // Pesquisa(serie,QuantidadeSeries);
-   // indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
-   //salvaDados(serie,QuantidadeSeries);
 
 
+         while (menu !=9)
+    {
+         
+        printf("\n\nBusca Streaming\n\n");
+        printf("Digite 1 para mostrar todas as series\n");
+        printf("Digite 2 para buscar uma serie\n");
+        printf("Digite 3 para buscar um genero\n");
+        printf("Digite 4 para adicionar uma serie ao historico\n");
+        printf("Digite 5 para cadastrar uma serie nova\n");
+        printf("Digite 6 para alterar uma serie\n");
+        printf("Digite 7 para apagar uma serie\n");
+        printf("Digite 8 para salvar os seus dados\n");
+        printf("Digite 9 para sair\n");
 
+      scanf("%d",&menu);
+
+
+       switch (menu){
+
+         case 1:
+          imprimirSeries(serie, QuantidadeSeries);
+           break;
+
+         case 2: 
+          Pesquisa(serie,QuantidadeSeries);
+            break;
+
+         case 3:
+          BuscaGenero(serie,QuantidadeSeries);
+           break;
+
+         case 4:
+          indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
+           break;
+
+         case 5:
+          QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
+            break;
+         case 6:
+          Alterar(QuantidadeSeries, serie);
+           break;
+
+         case 7: 
+          apagar(QuantidadeSeries, serie);
+           break;
+
+         case 8:
+          salvaDados(serie,QuantidadeSeries);
+           break;
+
+         case 9:
+           break; 
+       }
+
+     }
 
 
 
     free(serie);
     free (historico);
     fclose(arquivo);
-    
+
 
     return 0;
 }
