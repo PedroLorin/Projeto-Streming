@@ -1,101 +1,48 @@
+int main() {
+    int indiceHistorico = 0;
+    int QuantidadeSeries = 258;
+    Serie *serie = (Serie*) malloc(QuantidadeSeries * sizeof(Serie));
 
- 41
- 467
- 334
- 500
- 169
- 724
- 478
- 358
- 962
- 464
- 705
- 145
- 281
- 827
- 961
- 491
- 995
- 942
- 827
- 436
- 391
- 604
- 902
- 153
- 292
- 382
- 421
- 716
- 718
- 895
- 447
- 726
- 771
- 538
- 869
- 912
- 667
- 299
- 35
- 894
- 703
- 811
- 322
- 333
- 673
- 664
- 141
- 711
- 253
- 868
- 547
- 644
- 662
- 757
- 37
- 859
- 723
- 741
- 529
- 778
- 316
- 35
- 190
- 842
- 288
- 106
- 40
- 942
- 264
- 648
- 446
- 805
- 890
- 729
- 370
- 350
- 6
- 101
- 393
- 548
- 629
- 623
- 84
- 954
- 756
- 840
- 966
- 376
- 931
- 308
- 944
- 439
- 626
- 323
- 537
- 538
- 118
- 82
- 929
- 541
+
+    Historico *historico =(Historico*)malloc(indiceHistorico * sizeof(Historico)); 
+
+    FILE *arquivo = fopen("streaming_db.dat", "rb");
+
+    if (arquivo == NULL) {
+        perror("Erro ao abrir o arquivo Binario , tentaremos excutar o arquivo csv.\n");
+        
+        FILE *arquivo = fopen("streaming_db.txt", "r");
+
+         if (arquivo == NULL) {
+             perror("Erro ao abrir o arquivo CSV.\n");
+              return 1;
+        }
+        lerSeries(serie, QuantidadeSeries, arquivo);
+        
+    }else{
+
+        lerSeriesBinario(serie, QuantidadeSeries, arquivo);
+        salvaDados(serie,QuantidadeSeries);
+
+    }
+
+    imprimirSeries(serie, QuantidadeSeries);
+    //QuantidadeSeries = cadastrar(QuantidadeSeries, serie);
+    //apagar(QuantidadeSeries, serie);
+    BuscaGenero(serie,QuantidadeSeries);
+   // Alterar(QuantidadeSeries, serie);
+   // Pesquisa(serie,QuantidadeSeries);
+    indiceHistorico=salvaHistorico(serie,QuantidadeSeries,historico,indiceHistorico);
+    salvaDados(serie,QuantidadeSeries);
+
+
+
+
+
+    free(serie);
+    free (historico);
+    fclose(arquivo);
+    
+
+    return 0;
+}
